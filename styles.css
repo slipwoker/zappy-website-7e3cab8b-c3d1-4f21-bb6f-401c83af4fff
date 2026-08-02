@@ -5923,6 +5923,16 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
   display: none !important;
 }
 }
+
+@media (max-width: 768px) {
+#hero .index-hero-text {
+  margin-top: -34px;
+}
+
+#hero.index-hero-section {
+  padding-bottom: 60px !important;
+}
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
