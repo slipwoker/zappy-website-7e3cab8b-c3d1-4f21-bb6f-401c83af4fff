@@ -5691,6 +5691,27 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
     font-size: 1.6rem;
   }
 }
+
+@media (max-width: 768px) {
+.index-hero-section .index-hero-image-column {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.index-hero-section .index-hero-image-frame {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 90% !important;
+}
+
+.index-hero-section .index-hero-image-frame img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
