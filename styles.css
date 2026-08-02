@@ -5776,6 +5776,80 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
   font-size: 1.5rem !important;
 }
 }
+
+@media (max-width: 768px) {
+.index-hero-section {
+  overflow: visible !important;
+  min-height: auto !important;
+  height: auto !important;
+  padding-top: 60px !important;
+  padding-bottom: 60px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.index-hero-section .index-hero-headline {
+  font-size: 2rem !important;
+  line-height: 1.2 !important;
+}
+
+.index-hero-section .index-hero-subtitle {
+  font-size: 0.95rem !important;
+}
+
+.index-hero-section .index-hero-badge {
+  margin-bottom: 16px !important;
+  padding: 4px 12px !important;
+}
+
+.index-hero-section .index-hero-badge span {
+  font-size: 0.75rem !important;
+}
+
+.index-hero-section .index-hero-trust-item span {
+  font-size: 0.8rem !important;
+}
+
+.index-hero-section .index-hero-image-column {
+  max-height: 280px !important;
+}
+
+.index-hero-section .index-hero-image-frame {
+  aspect-ratio: 4/3 !important;
+}
+
+.index-hero-section .index-hero-decorative-cityscape {
+  display: none !important;
+}
+
+.index-process-section__title {
+  font-size: 1.5rem !important;
+}
+
+.index-services-section__title {
+  font-size: 1.5rem !important;
+}
+
+.index-about-section .about-content h2 {
+  font-size: 1.5rem !important;
+}
+
+.index-trust-section .principles-title {
+  font-size: 1.5rem !important;
+}
+
+.index-faq-section__title {
+  font-size: 1.5rem !important;
+}
+
+.index-faq-section__subtitle {
+  font-size: 0.9rem !important;
+}
+
+.index-contact-section__reassurance-title {
+  font-size: 1.5rem !important;
+}
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
