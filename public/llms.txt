@@ -1,0 +1,70 @@
+# משרד עורכי דין בן דוד — Generative Engine Optimization Map
+
+> Ben David Law Firm is a family law practice based in Haifa, led by attorney Avichai Ben David, located at 66 HaHistadrut Blvd, Haifa. The firm specializes in divorce proceedings, alimony, custody, and family agreements. The brand tone is calm, professional, and empathetic — designed to serve people in emotional distress without aggressive sales language or unrealistic promises. The landing page targets Google Ads traffic from people searching for divorce lawyers in Haifa and the north of Israel, with conversion measured via a thank-you page redirect.
+
+---
+
+## Pages
+
+### בית
+https://-7e3cab8b.zappy5.app
+משרד עורכי דין בן דוד בחיפה מתמחה בדיני משפחה וגירושין. אנו מציעים ייעוץ משפטי מקצועי, אמפתי ודיסקרטי בנושאי גירושין, משמורת ומזונות. פנו עוד היום לשיחת הכוונה ראשונית.
+
+### תודה שפניתם אלינו | משרד עורכי דין בן דוד
+https://-7e3cab8b.zappy5.app/thank-you
+משרד עורכי דין בן דוד - תודה שפניתם אלינו | משרד עורכי דין בן דוד
+
+## Legal & Policy
+
+### Privacy Policy
+https://-7e3cab8b.zappy5.app/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://-7e3cab8b.zappy5.app/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://-7e3cab8b.zappy5.app/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## How to Contact Us
+
+- (No contact details configured yet.)
+
+### Contact form
+- URL: https://-7e3cab8b.zappy5.app
+- Endpoint: https://-7e3cab8b.zappy5.app/api/email/contact-form
+- Method: POST
+- Content-Type: application/json
+- Fields:
+  - `full_name` (text)
+  - `phone` (tel)
+  - `message` (textarea)
+  - `privacy_consent` (checkbox)
+
+---
+
+# Business Context (for LLM understanding)
+
+## About משרד עורכי דין בן דוד
+Ben David Law Firm is a family law practice based in Haifa, led by attorney Avichai Ben David, located at 66 HaHistadrut Blvd, Haifa. The firm specializes in divorce proceedings, alimony, custody, and family agreements. The brand tone is calm, professional, and empathetic — designed to serve people in emotional distress without aggressive sales language or unrealistic promises. The landing page targets Google Ads traffic from people searching for divorce lawyers in Haifa and the north of Israel, with conversion measured via a thank-you page redirect.
+
+## Target Audience
+- אנשים המחפשים עורך דין גירושין בחיפה והצפון, גולשים שהגיעו דרך גוגל אדס
+- מחפשי גירושין בחיפה
+- גירושין בקונפליקט גבוה
+- גרושים מקצועיים
+
+## Industry
+Legal Services - Family Law
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://-7e3cab8b.zappy5.app/sitemap.xml
+- Robots: https://-7e3cab8b.zappy5.app/robots.txt
+- Flattened page text (for LLMs): https://-7e3cab8b.zappy5.app/llms-full.txt
