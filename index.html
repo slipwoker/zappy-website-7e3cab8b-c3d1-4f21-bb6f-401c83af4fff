@@ -780,10 +780,10 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
 <a class="skip-link" href="#main">דלג לתוכן הראשי</a>
   <nav class="navbar" dir="rtl">
   <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
-    <svg style="display:block !important" class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
-    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none !important">
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
       <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   </button>
@@ -1511,7 +1511,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
     <div class="about-content">
       <h2>על עורך הדין</h2>
       <div class="accent-line"></div>
-      <p class="about-bio">
+      <p class="about-bio" style="">
         עו"ד אבי בן דוד עומד בראש משרד עורכי דין בן דוד, הפועל משד' ההסתדרות 66 בחיפה. המשרד מתמחה בדיני משפחה ומלווה לקוחות בהליכי גירושין, מזונות, משמורת והסכמים, תוך הקפדה על יחס אישי, דיסקרטיות מלאה וליווי משפטי מדויק.
       </p>
       <p class="about-location">
@@ -1526,7 +1526,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
     <!-- Image Panel (END / Left in RTL) -->
     <div class="about-image-panel">
       <div class="image-frame">
-        <img loading="lazy" decoding="async" data-placeholder="index-about-image-1" data-context="Abstract Haifa legal office mood: soft daylight, paper texture, coastline silhouette, no visible people, no courtroom drama. Warm cream and sage tones." width="600" height="400" src="/assets/site-image-index-about-image-1.webp" alt="אווירת משרד עורכי דין בן דוד בחיפה" data-element-type="image" data-element-id="img-1785664746483-3nvff6j6j" fetchpriority="low">
+        <img loading="lazy" decoding="async" data-placeholder="index-about-image-1" data-context="Abstract Haifa legal office mood: soft daylight, paper texture, coastline silhouette, no visible people, no courtroom drama. Warm cream and sage tones." width="600" height="400" src="/assets/site-image-index-about-image-1.webp" alt="אווירת משרד עורכי דין בן דוד בחיפה" data-element-type="image" data-element-id="img-1785664746483-3nvff6j6j" style="" fetchpriority="low">
         <!-- Staggered paper edge decorations -->
         <div class="paper-edge paper-edge-1" aria-hidden="true"></div>
         <div class="paper-edge paper-edge-2" aria-hidden="true"></div>
@@ -1558,7 +1558,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
       </blockquote>
       <div class="statement-attribution">
         <span class="attribution-line" aria-hidden="true"></span>
-        <span class="attribution-name">עו"ד אבי בן דוד</span>
+        <span class="attribution-name" style="">עו"ד אבי בן דוד</span>
       </div>
     </div>
 
@@ -1634,19 +1634,23 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
 
 <section data-band-index="5" id="faq" class="index-faq-section" data-layout-spec="בית-faq">
   <div class="index-faq-section__container">
-    <div class="index-faq-section__header">
+    <div class="index-faq-section__header" data-grid-item-index="0">
       <h2 class="index-faq-section__title">שאלות נפוצות</h2>
       <p class="index-faq-section__subtitle">מענה לשאלות המרכזיות שעולות בתחילת הדרך. בחר שאלה כדי לראות את התשובה.</p>
     </div>
     
-    <div class="index-faq-section__list">
+    <div class="index-faq-section__list" data-grid-item-index="1">
       <details class="index-faq-section__item">
         <summary class="index-faq-section__question">
           <span class="index-faq-section__question-text">כמה זמן אורך הליך גירושין?</span>
           <span class="index-faq-section__icon" aria-hidden="true"></span>
         </summary>
-        <div class="index-faq-section__answer">
-          <div class="index-faq-section__answer-placeholder">התשובה תתווסף בקרוב</div>
+        <div class="index-faq-section__answer" style="text-align: start;">
+          <div class="index-faq-section__answer-placeholder" style="">הת
+
+ין מחיר אחיד. העלות נגזרת מהיקף ההליך: האם יש הסכמה בין הצדדים, כמה תיקים נפתחים, והאם קיימת מחלוקת רכושית.<br>
+בהליך מוסכם נהוג שכר טרחה גלובלי הידוע מראש. בהליך מתדיין התמחור נעשה לפי שלבים או לפי שעות. בנוסף לשכר הטרחה משולמות אגרות בית משפט לקופת המדינה.<br>
+בפגישה הראשונה תקבל טווח מחיר ברור בכתב, לפני שתתחייב לדבר.&nbsp; שובה תתווסף בקרוב</div>
         </div>
       </details>
 
