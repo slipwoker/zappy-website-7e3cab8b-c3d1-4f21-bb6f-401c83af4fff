@@ -780,10 +780,10 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
 <a class="skip-link" href="#main">דלג לתוכן הראשי</a>
   <nav class="navbar" dir="rtl">
   <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
-    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg style="display:block !important" class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
-    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none !important">
       <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
     </svg>
   </button>
@@ -1511,7 +1511,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
     <div class="about-content">
       <h2>על עורך הדין</h2>
       <div class="accent-line"></div>
-      <p class="about-bio" style="">
+      <p class="about-bio">
         עו"ד אבי בן דוד עומד בראש משרד עורכי דין בן דוד, הפועל משד' ההסתדרות 66 בחיפה. המשרד מתמחה בדיני משפחה ומלווה לקוחות בהליכי גירושין, מזונות, משמורת והסכמים, תוך הקפדה על יחס אישי, דיסקרטיות מלאה וליווי משפטי מדויק.
       </p>
       <p class="about-location">
@@ -1524,7 +1524,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
     <!-- Image Panel (END / Left in RTL) -->
     <div class="about-image-panel">
       <div class="image-frame">
-        <img loading="lazy" decoding="async" data-placeholder="index-about-image-1" data-context="Abstract Haifa legal office mood: soft daylight, paper texture, coastline silhouette, no visible people, no courtroom drama. Warm cream and sage tones." width="600" height="400" src="/assets/site-image-index-about-image-1.webp" alt="אווירת משרד עורכי דין בן דוד בחיפה" data-element-type="image" data-element-id="img-1785664746483-3nvff6j6j" style="" fetchpriority="low">
+        <img loading="lazy" decoding="async" data-placeholder="index-about-image-1" data-context="Abstract Haifa legal office mood: soft daylight, paper texture, coastline silhouette, no visible people, no courtroom drama. Warm cream and sage tones." width="600" height="400" src="/assets/site-image-index-about-image-1.webp" alt="אווירת משרד עורכי דין בן דוד בחיפה" data-element-type="image" data-element-id="img-1785664746483-3nvff6j6j" fetchpriority="low">
         <!-- Staggered paper edge decorations -->
         <div class="paper-edge paper-edge-1" aria-hidden="true"></div>
         <div class="paper-edge paper-edge-2" aria-hidden="true"></div>
@@ -1556,7 +1556,7 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
       </blockquote>
       <div class="statement-attribution">
         <span class="attribution-line" aria-hidden="true"></span>
-        <span class="attribution-name" style="">עו"ד אבי בן דוד</span>
+        <span class="attribution-name">עו"ד אבי בן דוד</span>
       </div>
     </div>
 
@@ -1642,6 +1642,103 @@ body:has(.zappy-announcement-bar) main > section[class*="hero"]:first-of-type {
     </svg>
   </div>
 </section>
+
+<section class="faq-section" aria-labelledby="faq-heading">
+  <div class="faq-container">
+    <div class="faq-header">
+      <h2 id="faq-heading" class="faq-title">שאלות נפוצות</h2>
+      <p class="faq-subtitle">תשובות לשאלות המרכזיות בתחום דיני המשפחה והגירושין</p>
+    </div>
+    
+    <div class="faq-list" role="list">
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+          <span class="faq-question-text">כמה זמן נמשך הליך גירושין?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-1" class="faq-answer" role="region" aria-labelledby="faq-question-1">
+          <div class="faq-answer-inner">
+            <p>משך הליך הגירושין תלוי במורכבות התיק וברמת שיתוף הפעולה בין הצדדים. גירושין בהסכמה יכולים להסתיים תוך מספר שבועות עד חודשים ספורים, בעוד שהליך המתנהל בהתנגדות עשוי להימשך שנה ואף יותר, בהתאם לעומס בבתי המשפט ובבתי הדין הרבניים. אנו פועלים לקדם את ההליך ביעילות תוך שמירה על האינטרסים שלכם.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+          <span class="faq-question-text">מה ההבדל בין גירושין בהסכמה לגירושין בהתנגדות?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-2" class="faq-answer" role="region">
+          <div class="faq-answer-inner">
+            <p>גירושין בהסכמה מתבססים על הסכמות הדדיות בין בני הזוג בכל הנושאים – רכוש, מזונות ומשמורת – ומאושרים בבית המשפט או בבית הדין במהירות יחסית. לעומת זאת, גירושין בהתנגדות מתרחשים כאשר קיימת מחלוקת באחד או יותר מהנושאים, וההכרעה עוברת להליך משפטי מלא הכולל דיונים, הבאת ראיות ועדויות. אנו מסייעים לכם לבחור את המסלול המתאים ביותר למצבכם.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+          <span class="faq-question-text">איך נקבעים דמי המזונות?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-3" class="faq-answer" role="region">
+          <div class="faq-answer-inner">
+            <p>דמי המזונות נקבעים על פי הדין האישי החל על בני הזוג, תוך התחשבות בהכנסות שני הצדדים, בצורכי הילדים ובזמני השהות של כל הורה. בית המשפט או בית הדין בוחנים את מכלול הנסיבות הכלכליות והמשפחתיות כדי להגיע להחלטה צודקת ומאוזנת. המשרד שלנו מלווה אתכם בהצגת התמונה המלאה לקביעת מזונות הוגנים.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+          <span class="faq-question-text">איך נקבעת משמורת על הילדים?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-4" class="faq-answer" role="region">
+          <div class="faq-answer-inner">
+            <p>העיקרון המנחה בקביעת משמורת הוא "טובת הילד" – בית המשפט בוחן את הקשר של הילד עם כל הורה, את מסוגלותו ההורית של כל צד ואת יציבות הסביבה הביתית. ככל שניתן, אנו מעודדים הורים להגיע להסכמות על הסדרי שהות מאוזנים ומכבדים, תוך שמירה על רווחת הילדים.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+          <span class="faq-question-text">האם ניתן להגיע להסכם מחוץ לבית המשפט?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-5" class="faq-answer" role="region">
+          <div class="faq-answer-inner">
+            <p>בהחלט. אנו מעודדים הידברות וגישור ככלי ראשוני ומרכזי לפתרון סכסוכים משפחתיים, החוסך זמן, כסף ומתחים מיותרים. הסכם המושג מחוץ לכותלי בית המשפט מקבל תוקף משפטי מלא עם אישורו, ומאפשר לשני הצדדים שליטה רבה יותר בתוצאה. המשרד שלנו מנוסה בניהול משא ומתן רגיש המוביל להסכמות יציבות.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item" role="listitem">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6">
+          <span class="faq-question-text">מה העלות של ליווי משפטי?</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div id="faq-answer-6" class="faq-answer" role="region">
+          <div class="faq-answer-inner">
+            <p>עלות הליווי המשפטי משתנה בהתאם למורכבות התיק, היקף השירותים הנדרשים ואופי ההליך – אם בהסכמה או בהתנגדות. אנו מאמינים בשקיפות מלאה ומספקים הערכת עלות ברורה ומפורטת כבר בתחילת הדרך, ללא הפתעות. נשמח לתאם פגישת ייעוץ ראשונית ללא התחייבות לבחינת הצרכים שלכם.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 
 <section data-band-index="6" id="contact" class="index-contact-section" data-layout-spec="בית-contact">
   <div class="index-contact-section__container">
