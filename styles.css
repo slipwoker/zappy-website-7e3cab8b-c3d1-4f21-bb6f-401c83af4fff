@@ -5712,6 +5712,70 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
   height: auto !important;
 }
 }
+
+@media (max-width: 768px) {
+.index-hero-section .index-hero-subtitle {
+  font-size: 1rem !important;
+}
+
+.index-hero-section .index-hero-actions {
+  width: 100% !important;
+}
+
+.index-hero-section .index-hero-btn-primary,
+  .index-hero-section .index-hero-btn-secondary {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+.index-process-section__step-card {
+  padding: 20px !important;
+}
+
+.index-process-section__title {
+  font-size: 1.5rem !important;
+}
+
+.index-process-section__subtitle {
+  font-size: 0.9rem !important;
+}
+
+.index-services-section__title {
+  font-size: 1.5rem !important;
+}
+
+.index-services-section__grid {
+  gap: 12px !important;
+}
+
+.index-services-section .service-tile {
+  padding: 16px !important;
+}
+
+.index-about-section .about-content h2 {
+  font-size: 1.5rem !important;
+}
+
+.index-trust-section .principles-title {
+  font-size: 1.5rem !important;
+}
+
+.index-trust-section .principle-card {
+  padding: 20px !important;
+}
+
+.index-trust-section .statement-text p {
+  font-size: 1.1rem !important;
+}
+
+.index-contact-section__reassurance-title {
+  font-size: 1.5rem !important;
+}
+
+.index-faq-section__title {
+  font-size: 1.5rem !important;
+}
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
