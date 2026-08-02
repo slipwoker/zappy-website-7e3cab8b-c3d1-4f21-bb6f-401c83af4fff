@@ -2,13 +2,13 @@
 
 Ben David Law Firm is a family law practice based in Haifa, led by attorney Avichai Ben David, located at 66 HaHistadrut Blvd, Haifa. The firm specializes in divorce proceedings, alimony, custody, and family agreements. The brand tone is calm, professional, and empathetic — designed to serve people in emotional distress without aggressive sales language or unrealistic promises. The landing page targets Google Ads traffic from people searching for divorce lawyers in Haifa and the north of Israel, with conversion measured via a thank-you page redirect.
 
-Source: https://-7e3cab8b.zappy5.app
+Source: https://example.com
 
 ---
 
 ## עורך דין גירושין בחיפה – ליווי משפטי אישי ורגיש — משרד עורכי דין בן דוד
 
-URL: https://-7e3cab8b.zappy5.app
+URL: https://example.com
 Description: משרד עורכי דין בן דוד בחיפה מתמחה בדיני משפחה וגירושין. אנו מציעים ייעוץ משפטי מקצועי, אמפתי ודיסקרטי בנושאי גירושין, משמורת ומזונות. פנו עוד היום לשיחת הכוונה ראשונית.
 
 עורך דין גירושין בחיפה – ליווי משפטי אישי ורגיש — משרד עורכי דין בן דוד
@@ -667,7 +667,7 @@ Description: משרד עורכי דין בן דוד בחיפה מתמחה בדי
 
 ## מדיניות פרטיות
 
-URL: https://-7e3cab8b.zappy5.app/privacy
+URL: https://example.com/privacy
 Description: מדיניות הפרטיות שלנו - כיצד אנו אוספים, משתמשים ומגנים על המידע שלכם
 
 מדיניות פרטיות
@@ -936,7 +936,7 @@ Description: מדיניות הפרטיות שלנו - כיצד אנו אוספי
 
 ## הצהרת נגישות
 
-URL: https://-7e3cab8b.zappy5.app/accessibility
+URL: https://example.com/accessibility
 Description: הצהרת הנגישות שלנו - מחויבותנו לנגישות דיגיטלית
 
 הצהרת נגישות
@@ -1214,7 +1214,7 @@ Description: הצהרת הנגישות שלנו - מחויבותנו לנגיש�
 
 ## תנאי שימוש
 
-URL: https://-7e3cab8b.zappy5.app/terms
+URL: https://example.com/terms
 Description: תנאי השימוש באתר - הזכויות והחובות של המשתמשים
 
 תנאי שימוש
@@ -1511,7 +1511,7 @@ Description: תנאי השימוש באתר - הזכויות והחובות של
 
 ## תודה שפניתם אלינו | משרד עורכי דין בן דוד
 
-URL: https://-7e3cab8b.zappy5.app/thank-you
+URL: https://example.com/thank-you
 Description: משרד עורכי דין בן דוד - תודה שפניתם אלינו | משרד עורכי דין בן דוד
 
 תודה שפניתם אלינו | משרד עורכי דין בן דוד
