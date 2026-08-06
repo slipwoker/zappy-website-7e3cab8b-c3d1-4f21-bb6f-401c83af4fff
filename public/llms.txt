@@ -7,25 +7,25 @@
 ## Pages
 
 ### בית
-https://example.com
+https://ben-david-law-office.zappy5.app
 משרד עורכי דין בן דוד בחיפה מתמחה בדיני משפחה וגירושין. אנו מציעים ייעוץ משפטי מקצועי, אמפתי ודיסקרטי בנושאי גירושין, משמורת ומזונות. פנו עוד היום לשיחת הכוונה ראשונית.
 
 ### תודה שפניתם אלינו | משרד עורכי דין בן דוד
-https://example.com/thank-you
+https://ben-david-law-office.zappy5.app/thank-you
 משרד עורכי דין בן דוד - תודה שפניתם אלינו | משרד עורכי דין בן דוד
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://example.com/privacy
+https://ben-david-law-office.zappy5.app/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://example.com/terms
+https://ben-david-law-office.zappy5.app/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://example.com/accessibility
+https://ben-david-law-office.zappy5.app/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
@@ -38,8 +38,8 @@ Information about WCAG compliance and accessibility features.
 - Address: שד' ההסתדרות 66, חיפה, 3296052, Israel
 
 ### Contact form
-- URL: https://example.com
-- Endpoint: https://example.com/api/email/contact-form
+- URL: https://ben-david-law-office.zappy5.app
+- Endpoint: https://ben-david-law-office.zappy5.app/api/email/contact-form
 - Method: POST
 - Content-Type: application/json
 - Fields:
@@ -68,6 +68,6 @@ Legal Services - Family Law
 
 # Machine-readable feeds
 
-- Sitemap (XML): https://example.com/sitemap.xml
-- Robots: https://example.com/robots.txt
-- Flattened page text (for LLMs): https://example.com/llms-full.txt
+- Sitemap (XML): https://ben-david-law-office.zappy5.app/sitemap.xml
+- Robots: https://ben-david-law-office.zappy5.app/robots.txt
+- Flattened page text (for LLMs): https://ben-david-law-office.zappy5.app/llms-full.txt
