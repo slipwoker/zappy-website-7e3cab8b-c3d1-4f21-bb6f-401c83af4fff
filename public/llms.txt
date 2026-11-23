@@ -7,25 +7,25 @@
 ## Pages
 
 ### בית
-https://ben-david-law-office.zappy5.app
+https://gerushin.bendavidlaw.co.il
 משרד עורכי דין בן דוד בחיפה מתמחה בדיני משפחה וגירושין. אנו מציעים ייעוץ משפטי מקצועי, אמפתי ודיסקרטי בנושאי גירושין, משמורת ומזונות. פנו עוד היום לשיחת הכוונה ראשונית.
 
 ### תודה שפניתם אלינו | משרד עורכי דין בן דוד
-https://ben-david-law-office.zappy5.app/thank-you
+https://gerushin.bendavidlaw.co.il/thank-you
 משרד עורכי דין בן דוד - תודה שפניתם אלינו | משרד עורכי דין בן דוד
 
 ## Legal & Policy
 
 ### Privacy Policy
-https://ben-david-law-office.zappy5.app/privacy
+https://gerushin.bendavidlaw.co.il/privacy
 Information about how user data is collected, stored, and protected.
 
 ### Terms & Conditions
-https://ben-david-law-office.zappy5.app/terms
+https://gerushin.bendavidlaw.co.il/terms
 Legal terms describing service usage, rights, and policies.
 
 ### Accessibility Statement
-https://ben-david-law-office.zappy5.app/accessibility
+https://gerushin.bendavidlaw.co.il/accessibility
 Information about WCAG compliance and accessibility features.
 
 ---
@@ -38,14 +38,14 @@ Information about WCAG compliance and accessibility features.
 - Address: שד' ההסתדרות 66, חיפה, 3296052, Israel
 
 ### Contact form
-- URL: https://ben-david-law-office.zappy5.app
-- Endpoint: https://ben-david-law-office.zappy5.app/api/email/contact-form
+- URL: https://gerushin.bendavidlaw.co.il
+- Endpoint: https://gerushin.bendavidlaw.co.il/api/email/contact-form
 - Method: POST
 - Content-Type: application/json
 - Fields:
   - `full_name` (text, required)
   - `phone` (tel, required)
-  - `message` (textarea)
+  - `message` (textarea, required)
   - `privacy_consent` (checkbox, required)
 
 ---
@@ -68,6 +68,6 @@ Legal Services - Family Law
 
 # Machine-readable feeds
 
-- Sitemap (XML): https://ben-david-law-office.zappy5.app/sitemap.xml
-- Robots: https://ben-david-law-office.zappy5.app/robots.txt
-- Flattened page text (for LLMs): https://ben-david-law-office.zappy5.app/llms-full.txt
+- Sitemap (XML): https://gerushin.bendavidlaw.co.il/sitemap.xml
+- Robots: https://gerushin.bendavidlaw.co.il/robots.txt
+- Flattened page text (for LLMs): https://gerushin.bendavidlaw.co.il/llms-full.txt

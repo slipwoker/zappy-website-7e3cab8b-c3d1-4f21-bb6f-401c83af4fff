@@ -230,6 +230,9 @@
   var ECOM_MODE = "";
   var IS_CATALOG = false;
   var IS_FULL = false;
+  var DIRECT_GA = false;
+  var DIRECT_META = false;
+  var GA_SEND_TO = "";
 
   var ECOM_ALIAS = {
     begin_checkout: 'checkout_started',
@@ -399,10 +402,14 @@
     return 'zappy_purchase_fired_' + String(orderId || '');
   }
 
+  function purchaseMetaDedupKey(orderId) {
+    return 'zappy_purchase_meta_fired_' + String(orderId || '');
+  }
+
   function alreadyFiredPurchase(orderId) {
     if (!orderId) return false;
     try {
-      return sessionStorage.getItem(purchaseDedupKey(orderId)) === '1';
+      return window.sessionStorage.getItem(purchaseDedupKey(orderId)) === '1';
     } catch (e) {
       return false;
     }
@@ -410,7 +417,78 @@
 
   function markPurchaseFired(orderId) {
     if (!orderId) return;
-    try { sessionStorage.setItem(purchaseDedupKey(orderId), '1'); } catch (e) {}
+    try { window.sessionStorage.setItem(purchaseDedupKey(orderId), '1'); } catch (e) {}
+  }
+
+  function alreadyFiredPurchaseMeta(orderId) {
+    if (!orderId) return false;
+    try {
+      return window.sessionStorage.getItem(purchaseMetaDedupKey(orderId)) === '1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function markPurchaseMetaFired(orderId) {
+    if (!orderId) return;
+    try { window.sessionStorage.setItem(purchaseMetaDedupKey(orderId), '1'); } catch (e) {}
+  }
+
+  function getPendingMetaEvents() {
+    try {
+      if (!Array.isArray(window.__zappyPendingMetaEvents)) {
+        window.__zappyPendingMetaEvents = [];
+      }
+      return window.__zappyPendingMetaEvents;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function enqueueMetaEvent(eventName, params, orderId) {
+    var q = getPendingMetaEvents();
+    if (orderId) {
+      for (var i = 0; i < q.length; i++) {
+        if (q[i] && q[i].orderId === orderId && q[i].eventName === eventName) return;
+      }
+    }
+    q.push({ eventName: eventName, params: params || {}, orderId: orderId || null });
+  }
+
+  /**
+   * Live sites replace the eager Meta snippet with a consent-gated lazy
+   * loader. Payment providers bounce the shopper back to /order-success
+   * before CookieConsent hydrates, so confirm-order used to fire Purchase
+   * while window.fbq was still undefined — then sessionStorage blocked a
+   * retry. Queue until fbq exists, then flush.
+   */
+  function flushPendingMetaEvents() {
+    if (typeof window.fbq !== 'function') return;
+    var q = getPendingMetaEvents().slice();
+    try { window.__zappyPendingMetaEvents = []; } catch (e) {}
+    for (var i = 0; i < q.length; i++) {
+      var item = q[i];
+      if (!item || !item.eventName) continue;
+      if (item.orderId && alreadyFiredPurchaseMeta(item.orderId)) continue;
+      try {
+        window.fbq('track', item.eventName, item.params || {});
+        if (item.orderId) markPurchaseMetaFired(item.orderId);
+      } catch (e2) {}
+    }
+  }
+  window.zappyFlushPendingMetaEvents = flushPendingMetaEvents;
+
+  if (DIRECT_META) {
+    var metaFlushAttempts = 0;
+    var metaFlushTimer = setInterval(function() {
+      metaFlushAttempts++;
+      flushPendingMetaEvents();
+      var pendingLen = 0;
+      try { pendingLen = (window.__zappyPendingMetaEvents || []).length; } catch (e) {}
+      if ((pendingLen === 0 && typeof window.fbq === 'function') || metaFlushAttempts > 60) {
+        clearInterval(metaFlushTimer);
+      }
+    }, 500);
   }
 
   /**
@@ -431,15 +509,19 @@
         metadata.pagePath = pagePath();
       }
 
+      var oid = '';
+      var purchaseAlreadySent = false;
+      var purchaseMetaAlreadySent = false;
       if (eventId === 'checkout_complete') {
-        var oid = String(metadata.orderId || metadata.order_id || metadata.transaction_id || '');
-        if (oid && alreadyFiredPurchase(oid)) return;
-        if (oid) markPurchaseFired(oid);
+        oid = String(metadata.orderId || metadata.order_id || metadata.transaction_id || '');
+        purchaseAlreadySent = !!(oid && alreadyFiredPurchase(oid));
+        purchaseMetaAlreadySent = !!(oid && alreadyFiredPurchaseMeta(oid));
+        if (purchaseAlreadySent && purchaseMetaAlreadySent) return;
       }
 
       // First-party (skip when already tracked via zappyTrackEcomAnalytics path
       // that opts out, or when caller already recorded under a different name)
-      if (!opts.skipFirstParty) {
+      if (!opts.skipFirstParty && !purchaseAlreadySent) {
         try {
           if (window.zappyAnalytics && typeof window.zappyAnalytics.track === 'function') {
             window.zappyAnalytics.track(eventId, metadata);
@@ -447,43 +529,79 @@
         } catch (e1) {}
       }
 
-      // GTM / dataLayer — platform-standard ecommerce event names
-      try {
-        window.dataLayer = window.dataLayer || [];
-        if (plat.ecom) {
-          var ga4ForGtm = buildGa4Params(eventId, metadata);
-          var ecommerce = {};
-          if (ga4ForGtm.transaction_id) ecommerce.transaction_id = ga4ForGtm.transaction_id;
-          if (ga4ForGtm.value != null) ecommerce.value = ga4ForGtm.value;
-          if (ga4ForGtm.currency) ecommerce.currency = ga4ForGtm.currency;
-          if (ga4ForGtm.items) ecommerce.items = ga4ForGtm.items;
-          window.dataLayer.push({ event: plat.gtm, ecommerce: ecommerce });
-          // Secondary Zappy-specific trigger for merchants who want it
-          if (eventId === 'checkout_complete' || eventId === 'checkout_started') {
-            window.dataLayer.push({ event: eventId, ecommerce: ecommerce });
+      // GTM / dataLayer — platform-standard ecommerce event names.
+      // Always push. A bare gtag.js snippet ignores plain event objects;
+      // a GTM container is what turns them into GA4/Ads hits.
+      if (!purchaseAlreadySent) {
+        try {
+          window.dataLayer = window.dataLayer || [];
+          if (plat.ecom) {
+            var ga4ForGtm = buildGa4Params(eventId, metadata);
+            var ecommerce = {};
+            if (ga4ForGtm.transaction_id) ecommerce.transaction_id = ga4ForGtm.transaction_id;
+            if (ga4ForGtm.value != null) ecommerce.value = ga4ForGtm.value;
+            if (ga4ForGtm.currency) ecommerce.currency = ga4ForGtm.currency;
+            if (ga4ForGtm.items) ecommerce.items = ga4ForGtm.items;
+            // Clear first so GTM does not merge this hit with the previous ecommerce object.
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({ event: plat.gtm, ecommerce: ecommerce });
+            // Secondary Zappy-specific trigger for merchants who want it
+            if (eventId === 'checkout_complete' || eventId === 'checkout_started') {
+              window.dataLayer.push({ ecommerce: null });
+              window.dataLayer.push({ event: eventId, ecommerce: ecommerce });
+            }
+          } else {
+            var dl = { event: plat.gtm };
+            for (var k in metadata) {
+              if (Object.prototype.hasOwnProperty.call(metadata, k)) dl[k] = metadata[k];
+            }
+            window.dataLayer.push(dl);
           }
-        } else {
-          var dl = { event: plat.gtm };
-          for (var k in metadata) {
-            if (Object.prototype.hasOwnProperty.call(metadata, k)) dl[k] = metadata[k];
+        } catch (e2) {}
+
+        // Direct Google Analytics snippet only. GTM also defines window.gtag;
+        // calling it then sends the same event again to every Google tag the
+        // container loaded. send_to keeps a direct GA install off those tags
+        // when the merchant also has GTM.
+        if (DIRECT_GA) {
+          try {
+            if (typeof window.gtag === 'function') {
+              var gaParams = buildGa4Params(eventId, metadata);
+              if (GA_SEND_TO && gaParams && typeof gaParams === 'object') {
+                var gaCopy = {};
+                for (var gk in gaParams) {
+                  if (Object.prototype.hasOwnProperty.call(gaParams, gk)) gaCopy[gk] = gaParams[gk];
+                }
+                gaCopy.send_to = GA_SEND_TO;
+                gaParams = gaCopy;
+              }
+              window.gtag('event', plat.ga4, gaParams);
+            }
+          } catch (e3) {}
+        }
+
+        if (oid) markPurchaseFired(oid);
+      }
+
+      // Meta Pixel — only the Zappy pixel integration. A pixel pasted inside
+      // GTM already initializes fbq; calling it from here would double-count.
+      // Live sites lazy-load fbq after marketing consent. If the stub is not
+      // defined yet, queue and flush when the pixel arrives.
+      if (DIRECT_META) {
+        try {
+          if (purchaseMetaAlreadySent) {
+            // already delivered to Meta
+          } else {
+            var metaParams = buildMetaParams(eventId, metadata);
+            if (typeof window.fbq === 'function') {
+              window.fbq('track', plat.meta, metaParams);
+              if (oid) markPurchaseMetaFired(oid);
+            } else {
+              enqueueMetaEvent(plat.meta, metaParams, eventId === 'checkout_complete' ? oid : null);
+            }
           }
-          window.dataLayer.push(dl);
-        }
-      } catch (e2) {}
-
-      // GA4 gtag
-      try {
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', plat.ga4, buildGa4Params(eventId, metadata));
-        }
-      } catch (e3) {}
-
-      // Meta Pixel (only when fbq is loaded — consent-gated lazy loader)
-      try {
-        if (typeof window.fbq === 'function') {
-          window.fbq('track', plat.meta, buildMetaParams(eventId, metadata));
-        }
-      } catch (e4) {}
+        } catch (e4) {}
+      }
     } catch (err) {}
   };
 
@@ -597,6 +715,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="עורך דין גירושין בחיפה – ליווי משפטי אישי ורגיש — משרד עורכי דין בן דוד">
     <meta name="twitter:description" content="משרד עורכי דין בן דוד בחיפה מתמחה בדיני משפחה וגירושין. אנו מציעים ייעוץ משפטי מקצועי, אמפתי ודיסקרטי בנושאי גירושין, משמורת ומזונות. פנו עוד היום לשיחת הכוונה ראשונית.">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LocalBusiness","@id":"https://gerushin.bendavidlaw.co.il#organization","name":"משרד עורכי דין בן דוד","url":"https://gerushin.bendavidlaw.co.il","description":"Ben David Law Firm is a family law practice based in Haifa, led by attorney Avichai Ben David, located at 66 HaHistadrut Blvd, Haifa. The firm specializes in divorce proceedings, alimony, custody, and family agreements. The brand tone is calm, professional, and empathetic — designed to serve people in emotional distress without aggressive sales language or unrealistic promises. The landing page targets Google Ads traffic from people searching for divorce lawyers in Haifa and the north of Israel, with conversion measured via a thank-you page redirect.","address":{"@type":"PostalAddress","streetAddress":"שד' ההסתדרות 66, חיפה, 3296052, Israel"},"contactPoint":[{"@type":"ContactPoint","contactType":"customer service","email":"Avibd@bendavidlaw.co.il","telephone":"048669000"}]},{"@type":"WebSite","@id":"https://gerushin.bendavidlaw.co.il#website","url":"https://gerushin.bendavidlaw.co.il","name":"משרד עורכי דין בן דוד","publisher":{"@id":"https://gerushin.bendavidlaw.co.il#organization"}},{"@type":"ContactPage","@id":"https://gerushin.bendavidlaw.co.il#contactpage","url":"https://gerushin.bendavidlaw.co.il","name":"עורך דין גירושין בחיפה – ליווי משפטי אישי ורגיש — משרד עורכי דין בן דוד","mainEntity":{"@id":"https://gerushin.bendavidlaw.co.il#organization"},"potentialAction":{"@type":"CommunicateAction","target":{"@type":"EntryPoint","urlTemplate":"https://gerushin.bendavidlaw.co.il/api/email/contact-form","actionPlatform":["http/method=POST"],"contentType":"application/json"},"instrument":[{"@type":"PropertyValue","name":"full_name","propertyID":"text","valueRequired":true,"description":"הזינו את שמכם המלא"},{"@type":"PropertyValue","name":"phone","propertyID":"tel","valueRequired":true,"description":"הזינו מספר טלפון"},{"@type":"PropertyValue","name":"message","propertyID":"textarea","valueRequired":true,"description":"תארו בכמה מילים את הסיטואציה..."},{"@type":"PropertyValue","name":"privacy_consent","propertyID":"checkbox","valueRequired":true}]}},{"@type":"FAQPage","@id":"https://gerushin.bendavidlaw.co.il#faq","mainEntity":[{"@type":"Question","name":"כמה זמן נמשך הליך גירושין?","acceptedAnswer":{"@type":"Answer","text":"&nbsp; התשובה תלויה בעיקר בשאלה אחת: האם יש הסכמה. כשהצדדים מגיעים להסכם גירושין, ההליך יכול להסתיים בתוך חודשים ספורים. כשיש מחלוקת על רכוש או על הילדים, הוא נמשך לרוב למעלה משנה. חלק ניכר ממשך ההליך נקבע כבר בשלבים הראשונים - ולכן הליווי המשפטי משמעותי דווקא בהתחלה, לפני שנפתחים תיקים.&nbsp;&nbsp;"}},{"@type":"Question","name":"חייבים להגיש בקשה ליישוב סכסוך? ולמה זה דחוף?","acceptedAnswer":{"@type":"Answer","text":"&nbsp; כן. ברוב סכסוכי המשפחה החוק מחייב להגיש בקשה ליישוב סכסוך לפני הגשת תביעה, ולאחריה נערכות פגישות מהו\"ת ביחידת הסיוע שליד בית המשפט. בתקופה זו ההליכים מעוכבים. למי שמגיש ראשון יש יתרון בבחירת הערכאה שבה יידונו הרכוש והמזונות - החלטה שמשפיעה על התוצאה ולא תמיד ניתנת לשינוי בהמשך. במקרים דחופים ובמצבי אלימות קיימים חריגים. זו הסיבה שכדאי להתייעץ מוקדם, גם אם עדיין לא החלטת אם אתה רוצה להתגרש.&nbsp;&nbsp;"}},{"@type":"Question","name":"מה להביא לפגישה הראשונה?","acceptedAnswer":{"@type":"Answer","text":"&nbsp; ככל שיש בידך יותר מידע כך הפגישה יעילה יותר - אבל אל תדחה אותה בגלל מסמך חסר. שימושי להביא: תעודת זהות עם ספח, כתובה או הסכם ממון אם קיים, תלושי שכר אחרונים של שני הצדדים, נסח טאבו של דירת המגורים, ופירוט חסכונות והלוואות. אם כבר נפתח הליך בבית המשפט או בבית הדין - הבא את המסמכים שקיבלת.&nbsp;&nbsp;"}},{"@type":"Question","name":"כמה עולה ייצוג בהליך גירושין?","acceptedAnswer":{"@type":"Answer","text":"&nbsp; אין מחיר אחיד. העלות נגזרת מהיקף ההליך: האם יש הסכמה בין הצדדים, כמה תיקים נפתחים, והאם קיימת מחלוקת רכושית. בהליך מוסכם נהוג שכר טרחה גלובלי הידוע מראש. בהליך מתדיין התמחור נעשה לפי שלבים או לפי שעות. בנוסף לשכר הטרחה משולמות אגרות בית משפט לקופת המדינה. בפגישה הראשונה תקבל טווח מחיר ברור בכתב, לפני שתתחייב לדבר.&nbsp;&nbsp;"}},{"@type":"Question","name":"האם ניתן להגיע להסכם מחוץ לבית המשפט?","acceptedAnswer":{"@type":"Answer","text":"בהחלט. אנו מעודדים הידברות וגישור ככלי ראשוני ומרכזי לפתרון סכסוכים משפחתיים, החוסך זמן, כסף ומתחים מיותרים. הסכם המושג מחוץ לכותלי בית המשפט מקבל תוקף משפטי מלא עם אישורו, ומאפשר לשני הצדדים שליטה רבה יותר בתוצאה."}},{"@type":"Question","name":"בית משפט לענייני משפחה או בית דין רבני?","acceptedAnswer":{"@type":"Answer","text":"&nbsp; עצם הגירושין נדון בבית הדין הרבני. הנושאים הנלווים - רכוש, מזונות ומשמורת - יכולים להידון בכל אחת מהערכאות, והבחירה משפיעה על אופן הדיון ועל התוצאה. מזונות הילדים הם זכות עצמאית של הילד, ולכן ניתן לדון בהם בבית המשפט לענייני משפחה גם כאשר יתר הנושאים נדונים במקום אחר.&nbsp; &nbsp;&nbsp;"}}]}]}</script>
     <meta property="og:type" content="website">
   <meta property="og:locale" content="he_IL">
   
@@ -1577,7 +1696,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
   
   <main id="main">
-    <section class="index-hero-section" data-layout-spec="בית-hero" data-hero-type="side-by-side" id="hero" style="padding-right: 16px; padding-bottom: 60px; padding-left: 16px; margin-top: -94px !important; padding-top: 94px !important;" data-zappy-nav-underlap="true">
+    <section class="index-hero-section" data-layout-spec="בית-hero" data-hero-type="side-by-side" id="hero" style="padding-right: 16px; padding-bottom: 60px; padding-left: 16px;">
   <div class="index-hero-grid">
     <!-- Text Column (Right in RTL) -->
     <div class="index-hero-text">
@@ -1585,7 +1704,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span>משרד עורכי דין בחיפה</span>
       </div>
       <h1 class="index-hero-headline">ליווי משפטי רגיש ומקצועי בדיני משפחה</h1>
-      <h3 class="index-hero-subtitle">משרד עורכי דין בן דוד מתמחה בגירושין, מזונות, משמורת והסכמי משפחה, מתוך הבנה עמוקה של המצוקה והרגישות הנדרשות</h3>
+      <h3 class="index-hero-subtitle" style="">משרד עורכי דין בן דוד עוסק בגירושין, מזונות, משמורת והסכמי משפחה, מתוך הבנה עמוקה של המצוקה והרגישות הנדרשות</h3>
       <div class="index-hero-actions">
         <a href="tel:048669000" class="index-hero-btn-primary" data-element-type="button" data-element-id="btn-1785668246388-4e5d26jyi" data-native-element="true">
           <i class="fas fa-phone-alt"></i>
@@ -1611,7 +1730,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Image Column (Left in RTL) -->
     <div class="index-hero-image-column">
       <div class="index-hero-image-frame">
-        <div data-zappy-zoom-wrapper="true" data-element-id="img-1785668246392-jrymn495q" data-element-type="image" data-zappy-zoom-wrapper-width="600px" data-zappy-zoom-wrapper-height="750px" data-zappy-zoom-wrapper-width-mode="px" data-zappy-zoom-wrapper-align="center" style="position: relative !important; overflow: hidden !important; width: 600px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 750px !important; display: block !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true"><img loading="eager" fetchpriority="high" data-context="Professional law office interior in Haifa with warm wood tones, bookshelves with legal volumes, soft natural light from a window, an elegant desk with a family law case file, calm and trustworthy atmosphere suitable for a family law firm" width="600" height="400" src="/assets/image-legal-services-family-law-section-service-index-hero-image-1-1785668280967-z5ih54.webp?v=1785668282527" alt="משרד עורכי דין בן דוד - אווירה מקצועית ואמינה" data-element-type="image" data-element-id="img-1785668246392-jrymn495q" style="object-position: 50% 50% !important; display: block !important; object-fit: cover !important; margin: 0px !important; width: 100% !important; max-width: 100% !important; height: auto !important; position: relative !important; left: 0px !important; top: 0px !important; max-height: 400px !important;" data-zappy-zoom="1" data-zappy-original-width="600" data-zappy-original-height="750" data-zappy-object-position="50% 50%" data-zappy-carousel-image-ready="true" decoding="async"></div>
+        <div data-zappy-zoom-wrapper="true" data-element-id="img-1785668246392-jrymn495q" data-element-type="image" data-zappy-zoom-wrapper-width="600px" data-zappy-zoom-wrapper-height="750px" data-zappy-zoom-wrapper-width-mode="px" data-zappy-zoom-wrapper-align="center" style="position: relative !important; overflow: hidden !important; width: 600px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 750px !important; display: block !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true"><img loading="eager" fetchpriority="high" data-context="Professional law office interior in Haifa with warm wood tones, bookshelves with legal volumes, soft natural light from a window, an elegant desk with a family law case file, calm and trustworthy atmosphere suitable for a family law firm" width="600" height="400" src="/assets/image-legal-services-family-law-section-service-index-hero-image-1-1785668280967-z5ih54.webp?v=1785668282527" alt="משרד עורכי דין בן דוד - אווירה מקצועית ואמינה" data-zappy-editable-image="true" data-element-type="image" data-element-id="img-1785668246392-jrymn495q" style="object-position: 50% 50% !important; display: block !important; object-fit: cover !important; margin: 0px !important; width: 100% !important; max-width: none !important; height: 100% !important; position: absolute !important; left: 0% !important; top: 0% !important; max-height: none !important" data-zappy-zoom="1" data-zappy-original-width="600" data-zappy-original-height="750" data-zappy-object-position="50% 50%" data-zappy-carousel-image-ready="true" decoding="async"></div>
       </div>
       <!-- Decorative cityscape overlay motif -->
       <div class="index-hero-decorative-cityscape" aria-hidden="true">
@@ -1690,16 +1809,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="index-services-section__container">
         <!-- Intro Block -->
         <div class="index-services-section__intro">
-            <span class="index-services-section__overline">תחומי התמחות</span>
-            <h2 class="index-services-section__title">ליווי משפטי מקצועי בדיני משפחה</h2>
+            <p><span class="index-services-section__overline" style="">תחומי עיסוק</span>
+            </p><h2 class="index-services-section__title">ליווי משפטי מקצועי בדיני משפחה</h2>
             <p class="index-services-section__description">כל סוגיה בדיני משפחה דורשת התייחסות משפטית מדויקת לצד רגישות אישית. אנו מספקים ייעוץ מקיף, הכנה יסודית וליווי צמוד לאורך כל ההליך, תוך שמירה על שיקול דעת מקצועי.</p>
             <div class="index-services-section__accent-line"></div>
         </div>
 
         <!-- Service Tiles Grid -->
-        <div class="index-services-section__grid">
+        <div class="index-services-section__grid zappy-preserve-css-grid" id="zappy-auto-grid-1795421226998-lstuet" data-zappy-auto-grid="true" data-original-item-width="272" data-original-gap="24px" style="display: grid; --zappy-grid-cols: repeat(auto-fit, minmax(min(100%, 272px), 1fr)); grid-template-columns: repeat(auto-fit, minmax(min(100%, 272px), 1fr)); align-items: stretch !important;" data-zappy-explicit-columns="true">
             <!-- Tile 1 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="0">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1714,7 +1833,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </article>
 
             <!-- Tile 2 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="1">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1726,7 +1845,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </article>
 
             <!-- Tile 3 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="2">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M12 1V23" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1738,7 +1857,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </article>
 
             <!-- Tile 4 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="3">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M16 4H18C18.5304 4 19.0391 4.21071 19.4142 4.58579C19.7893 4.96086 20 5.46957 20 6V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V6C4 5.46957 4.21071 4.96086 4.58579 4.58579C4.96086 4.21071 5.46957 4 6 4H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1752,7 +1871,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </article>
 
             <!-- Tile 5 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="4">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1765,7 +1884,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </article>
 
             <!-- Tile 6 -->
-            <article class="service-tile">
+            <article class="service-tile" data-grid-item-index="5">
                 <div class="service-tile__icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-icon-type="svg">
                         <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
