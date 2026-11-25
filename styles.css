@@ -6002,6 +6002,25 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
   font-size: 1.75rem;
 }
 }
+
+.index-divorce-lawyer-section__ul {
+  font-family: 'Assistant', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-dark);
+  margin: 0;
+  padding-right: 24px;
+  text-align: right;
+  list-style-type: disc;
+}
+
+.index-divorce-lawyer-section__ul li {
+  margin-bottom: 14px;
+}
+
+.index-divorce-lawyer-section__ul strong {
+  color: var(--primary);
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
