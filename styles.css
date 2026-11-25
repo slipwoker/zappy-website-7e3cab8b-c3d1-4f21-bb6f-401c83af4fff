@@ -6021,6 +6021,20 @@ div[id*="mic-access-tool-box"] button[class*="reset"] * {
 .index-divorce-lawyer-section__ul strong {
   color: var(--primary);
 }
+
+.index-divorce-lawyer-section__qa-question {
+  font-family: 'Assistant', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+  margin: 24px 0 8px 0;
+  text-align: right;
+}
+
+.index-divorce-lawyer-section__qa-question strong {
+  color: var(--primary);
+  font-weight: 700;
+}
 /* mobile-submenu-overflow-fix */
 @media (max-width: 768px) {
   .navbar .sub-menu.mobile-expanded,
