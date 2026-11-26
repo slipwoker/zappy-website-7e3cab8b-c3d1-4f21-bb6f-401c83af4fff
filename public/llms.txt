@@ -35,7 +35,7 @@ Information about WCAG compliance and accessibility features.
 - Email: Avibd@bendavidlaw.co.il
 - Phone: 048669000
 - Phone (tel): tel:048669000
-- Address: שד' ההסתדרות 66, חיפה, 3296052, Israel
+- Address: שד׳ ההסתדרות 66, חיפה, 3296052, Israel
 
 ### Contact form
 - URL: https://gerushin.bendavidlaw.co.il
